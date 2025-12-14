@@ -34,12 +34,10 @@ local function Load(dir)
         listDir = dir:sub(2)
     end
 
-    print("[Bastion] Load() - dir: " .. tostring(dir) .. ", listDir: " .. tostring(listDir))
     local files = ListFiles(listDir)
-    print("[Bastion] ListFiles returned: " .. type(files) .. ", count: " .. tostring(files and #files or "nil"))
 
     if not files then
-        print("[Bastion] WARNING: ListFiles returned nil for: " .. listDir)
+        Bastion:Debug("ListFiles returned nil for", listDir)
         return
     end
 
@@ -569,7 +567,6 @@ function Bastion.Bootstrap()
     Load("@")            -- 加载脚本根目录文件
 
     -- 手动加载 scripts 目录下的脚本（因为 ListFiles 返回 nil）
-    print("[Bastion] 手动加载 scripts 目录下的脚本...")
     local scriptsToLoad = {
         "~scripts/SurvivalHunter",
         "~scripts/MarksmanHunter",
@@ -579,10 +576,9 @@ function Bastion.Bootstrap()
     for _, scriptPath in ipairs(scriptsToLoad) do
         local ok, err = pcall(function()
             Bastion:Require(scriptPath)
-            print("[Bastion] 已加载: " .. scriptPath)
         end)
         if not ok then
-            print("[Bastion] 加载失败: " .. scriptPath .. " - " .. tostring(err))
+            Bastion:Debug("Failed to load", scriptPath, err)
         end
     end
     
