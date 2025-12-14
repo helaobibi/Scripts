@@ -6,49 +6,62 @@ local Evaulator = Tinkr.Evaluator
 local Bastion = {DebugMode = false}
 Bastion.__index = Bastion
 
-function Bastion:Require(file)
-    -- If require starts with an @ then we require from the scripts/bastion/scripts folder
+function Bastion:Require(file, ...)
+    -- 处理路径前缀
     if file:sub(1, 1) == '@' then
-        file = file:sub(2)
-        -- print('1')
-        return require('scripts/bastion/scripts/' .. file, Bastion)
-    elseif file:sub(1, 1) == "~" then
-        file = file:sub(2)
-        -- print("2")
-        return require('scripts/bastion/' .. file, Bastion)
+        file = '/scripts/scripts/' .. file:sub(2)
+    elseif file:sub(1, 1) == '~' then
+        file = '/scripts/' .. file:sub(2)
+    elseif file:sub(1, 1) == '/' then
+        file = '/scripts' .. file
     else
-        -- print("Normal req")
-        return require(file, Bastion)
+        file = '/scripts/' .. file
     end
+
+    -- 无扩展名时自动添加 .lua
+    if not file:match("%.lua$") and not file:match("%.luac$") then
+        file = file .. ".lua"
+    end
+
+    return Tinkr:Require(file, Bastion, ...)
 end
 
 local function Load(dir)
-    local dir = dir
-
+    local listDir = dir
     if dir:sub(1, 1) == '@' then
-        dir = dir:sub(2)
-        dir = 'scripts/bastion/scripts/' .. dir
+        listDir = 'scripts/' .. dir:sub(2)
+    elseif dir:sub(1, 1) == '~' then
+        listDir = dir:sub(2)
     end
 
-    if dir:sub(1, 1) == '~' then
-        dir = dir:sub(2)
-        dir = 'scripts/bastion/' .. dir
-    end
+    print("[Bastion] Load() - dir: " .. tostring(dir) .. ", listDir: " .. tostring(listDir))
+    local files = ListFiles(listDir)
+    print("[Bastion] ListFiles returned: " .. type(files) .. ", count: " .. tostring(files and #files or "nil"))
 
-    local files = ListFiles(dir)
+    if not files then
+        print("[Bastion] WARNING: ListFiles returned nil for: " .. listDir)
+        return
+    end
 
     for i = 1, #files do
         local file = files[i]
         if file:sub(-4) == ".lua" or file:sub(-5) == '.luac' then
-            local fileName = file:sub(1, -5)  -- 移除文件扩展名
-            Bastion:Require(dir .. fileName)
+            -- 使用原始 dir 前缀，让 Bastion:Require 处理路径转换
+            Bastion:Require(dir .. file:sub(1, -5))
         end
     end
 end
 
 function Bastion.require(class)
-    -- return require("scripts/bastion/src/" .. class .. "/" .. class, Bastion)
-    return Bastion:Require("~/src/" .. class .. "/" .. class)
+    -- 加载模块（模块内部会把自己挂载到 Bastion[class]）
+    local ok, err = pcall(function()
+        Bastion:Require("~" .. class .. "/" .. class)
+    end)
+    if not ok then
+        Bastion:Print("ERROR loading " .. class .. ": " .. tostring(err))
+    end
+    -- 返回挂载的值
+    return Bastion[class]
 end
 
 -- fenv for all required files
@@ -115,10 +128,12 @@ function Bastion.Bootstrap()
     Bastion.Cacheable = Bastion.require("Cacheable")
     ---@type Refreshable
     Bastion.Refreshable = Bastion.require("Refreshable")
-    ---@type Unit
-    Bastion.Unit = Bastion.require("Unit")
+    ---@type AuraTable
+    Bastion.AuraTable = Bastion.require("AuraTable")
     ---@type Aura
     Bastion.Aura = Bastion.require("Aura")
+    ---@type Unit
+    Bastion.Unit = Bastion.require("Unit")
     ---@type APL, APLActor, APLTrait
     Bastion.APL, Bastion.APLActor, Bastion.APLTrait = Bastion.require("APL")
     ---@type Module
@@ -140,8 +155,6 @@ function Bastion.Bootstrap()
     ---@type ItemBook
     Bastion.ItemBook = Bastion.require("ItemBook")
     Bastion.Globals.ItemBook = Bastion.ItemBook:New()
-    ---@type AuraTable
-    Bastion.AuraTable = Bastion.require("AuraTable")
     ---@type Class
     Bastion.Class = Bastion.require("Class")
     ---@type Timer
@@ -554,6 +567,24 @@ function Bastion.Bootstrap()
     Load("@Libraries/")  -- 加载库文件
     Load("@Modules/")    -- 加载模块文件
     Load("@")            -- 加载脚本根目录文件
+
+    -- 手动加载 scripts 目录下的脚本（因为 ListFiles 返回 nil）
+    print("[Bastion] 手动加载 scripts 目录下的脚本...")
+    local scriptsToLoad = {
+        "~scripts/SurvivalHunter",
+        "~scripts/MarksmanHunter",
+        "~scripts/FrostMage",
+        "~scripts/ArcaneMage",
+    }
+    for _, scriptPath in ipairs(scriptsToLoad) do
+        local ok, err = pcall(function()
+            Bastion:Require(scriptPath)
+            print("[Bastion] 已加载: " .. scriptPath)
+        end)
+        if not ok then
+            print("[Bastion] 加载失败: " .. scriptPath .. " - " .. tostring(err))
+        end
+    end
     
     -- ===================== HERUI 组件加载 =====================
     -- 根据玩家职业加载对应的 HERUI UI 插件
@@ -561,15 +592,15 @@ function Bastion.Bootstrap()
     
     if playerClass == "HUNTER" then
         -- 加载猎人UI插件
-        Bastion:Require("~/src/herui/hunter")
+        Bastion:Require("~herui/hunter")
         Bastion:Print("已加载猎人UI插件")
     elseif playerClass == "MAGE" then
         -- 加载冰霜法师UI插件
-        Bastion:Require("~/src/herui/frost")
+        Bastion:Require("~herui/frost")
         Bastion:Print("已加载冰霜法师UI插件")
         
         -- 奥术专精（暂时注释）
-        -- Bastion:Require("~/src/herui/arcane")
+        -- Bastion:Require("~herui/arcane")
         -- Bastion:Print("已加载奥术法师UI插件")
     end
     

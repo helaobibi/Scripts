@@ -472,4 +472,5 @@ function Item:GetSpell()
     return nil
 end
 
+Bastion.Item = Item
 return Item

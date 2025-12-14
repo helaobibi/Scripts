@@ -102,6 +102,7 @@ function ObjectManager:Refresh()
     end
 end
 
+Bastion.ObjectManager = ObjectManager
 return ObjectManager
 
 

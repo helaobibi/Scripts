@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 -- Create a Vector3 class
 
 ---@class Vector3
@@ -330,4 +332,5 @@ function Vector3:Normalize()
     return Vector3:New(0, 0, 0)
 end
 
+Bastion.Vector3 = Vector3
 return Vector3

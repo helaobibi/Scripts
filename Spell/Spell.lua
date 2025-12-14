@@ -369,9 +369,9 @@ function Spell:Click(x, y, z)
     if type(x) == 'table' then
         x, y, z = x.x, x.y, x.z
     end
-    if IsSpellPending() == 64 then
+    if SpellIsTargeting() then
         MouselookStop()
-        Click(x, y, z)
+        ClickPosition(x, y, z)
         if self:GetWasLooking() then
             MouselookStart()
         end
@@ -635,4 +635,5 @@ function Spell:IsFree()
     return self:GetCost() == 0
 end
 
+Bastion.Spell = Spell
 return Spell

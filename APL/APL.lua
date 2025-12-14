@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 -- Document with emmy lua: https://emmylua.github.io/
 -- Create an APL trait for the APL class
 ---@class APLTrait
@@ -299,4 +301,7 @@ function APL:__tostring()
     return "Bastion.__APL(" .. self.name .. ")"
 end
 
+Bastion.APL = APL
+Bastion.APLActor = APLActor
+Bastion.APLTrait = APLTrait
 return APL, APLActor, APLTrait

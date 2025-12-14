@@ -199,7 +199,7 @@ end
 ---@param unit Unit
 ---@return number
 function Unit:GetDistance(unit)
-    local pself = self:GetPosition()
+    local pself = self:sition()
     local punit = unit:GetPosition()
 
     return pself:Distance(punit)
@@ -264,7 +264,7 @@ function Unit:GetOMToken()
     if not self.unit then
         return "none"
     end
-    return self.unit:unit()
+    return self.unit
 end
 
 -- Is the unit a target
@@ -1251,4 +1251,5 @@ function Unit:MoveToTargetBehind(distance)
     return true
 end
 
+Bastion.Unit = Unit
 return Unit

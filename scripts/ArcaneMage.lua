@@ -197,7 +197,7 @@ end)
 -- 冰箱
 DefensiveAPL:AddSpell(
     IceBlock:CastableIf(function(self)
-        return GetKeyState(3)  -- 按下F键时释放
+        return GetKeyState(3) > 30000  -- 按下F键时释放
             and not Player:GetAuras():FindMy(IceBlock):IsUp()    -- 没有冰箱buff
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
@@ -208,7 +208,7 @@ DefensiveAPL:AddSpell(
 
 -- 取消冰箱
 DefensiveAPL:AddAction("CancelIceBlock", function()
-    if not GetKeyState(3)  -- F键松开时
+    if not (GetKeyState(3) > 30000)  -- F键松开时
         and Player:GetAuras():FindMy(IceBlock):IsUp() then   -- 有冰箱buff
         CancelSpellByName("寒冰屏障")
         return true
@@ -399,7 +399,7 @@ ArcaneMage:Sync(function()
         return
     end
 
-    if GetKeyState(58) then
+    if GetKeyState(58) > 30000 then
         BurstAPL:Execute()
     end
 

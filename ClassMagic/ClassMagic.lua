@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 ---@class ClassMagic
 local ClassMagic = {}
 ClassMagic.__index = ClassMagic
@@ -50,4 +52,5 @@ function ClassMagic:Resolve(Class, key)
     return Class[key]
 end
 
+Bastion.ClassMagic = ClassMagic
 return ClassMagic

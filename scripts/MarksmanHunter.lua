@@ -218,7 +218,7 @@ end)
 -- 假死（按F键触发）
 DefensiveAPL:AddSpell(
     FeignDeath:CastableIf(function(self)
-        return GetKeyState(3)  -- 按下F键时释放
+        return GetKeyState(70) > 30000  -- 按下F键时释放
             and not Player:GetAuras():FindMy(FeignDeath):IsUp()  -- 没有假死buff
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
@@ -234,7 +234,7 @@ DefensiveAPL:AddSpell(
                Player:GetHP() <= 30 and
                not self:IsOnCooldown() and
                Player:IsAffectingCombat() and
-               not GetKeyState(17) -- 不在按T键时才使用自动防御逻辑
+               not (GetKeyState(84) > 30000) -- 不在按T键时才使用自动防御逻辑
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
             SpellStopCasting()
@@ -246,7 +246,7 @@ DefensiveAPL:AddSpell(
 DefensiveAPL:AddSpell(
     Intimidation:CastableIf(function(self)
         return HERUIIntimidation() and  -- 检查威慑开关
-               GetKeyState(17) and -- 按下T键时释放
+               GetKeyState(84) > 30000 and -- 按下T键时释放
                not Player:GetAuras():FindMy(Intimidation):IsUp() -- 没有威慑buff
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
@@ -262,14 +262,14 @@ DefensiveAPL:AddSpell(
 DefensiveAPL:AddAction("CancelTKeyIntimidation", function()
     if isTKeyIntimidationActive then
         -- T键触发的威慑：松开T键时立即取消
-        if not GetKeyState(17) and Player:GetAuras():FindMy(Intimidation):IsUp() then
+        if not (GetKeyState(84) > 30000) and Player:GetAuras():FindMy(Intimidation):IsUp() then
             CancelSpellByName("威慑")
             isTKeyIntimidationActive = false
             return true
         end
     else
         -- 自动触发的威慑：血量大于等于80%时取消
-        if not GetKeyState(17) and Player:GetHP() >= 80 and Player:GetAuras():FindMy(Intimidation):IsUp() then
+        if not (GetKeyState(84) > 30000) and Player:GetHP() >= 80 and Player:GetAuras():FindMy(Intimidation):IsUp() then
             CancelSpellByName("威慑")
             return true
         end
@@ -553,7 +553,7 @@ MarksmanHunter:Sync(function()
     PetControlAPL:Execute()
 
     -- 如果按住F键（假死）或T键（威慑），则不执行输出循环
-    if GetKeyState(3) or GetKeyState(17) then
+    if GetKeyState(84) > 30000 or GetKeyState(70) > 30000 then
         return
     end
 

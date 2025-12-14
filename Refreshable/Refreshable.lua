@@ -72,4 +72,5 @@ function Refreshable:SetCallback(cb)
     self.callback = cb
 end
 
+Bastion.Refreshable = Refreshable
 return Refreshable

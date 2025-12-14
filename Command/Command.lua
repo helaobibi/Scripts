@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 -- Create a wow command handler class
 ---@class Command
 ---@field command string
@@ -75,4 +77,5 @@ function Command:PrintHelp()
     end
 end
 
+Bastion.Command = Command
 return Command

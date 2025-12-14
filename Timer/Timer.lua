@@ -45,4 +45,5 @@ function Timer:Reset()
     self.startTime = nil
 end
 
+Bastion.Timer = Timer
 return Timer

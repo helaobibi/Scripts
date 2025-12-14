@@ -193,7 +193,7 @@ end)
 -- 假死
 DefensiveAPL:AddSpell(
     FeignDeath:CastableIf(function(self)
-        return GetKeyState(3)  -- 按下F键时释放
+        return GetKeyState(70) > 30000  -- 按下F键时释放
             and not Player:GetAuras():FindMy(FeignDeath):IsUp()  -- 没有假死buff
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
@@ -209,7 +209,7 @@ DefensiveAPL:AddSpell(
                Player:GetHP() <= 30 and
                not self:IsOnCooldown() and
                Player:IsAffectingCombat() and
-               not GetKeyState(17) -- 不在按T键时才使用原有逻辑
+               not (GetKeyState(84) > 30000) -- 不在按T键时才使用原有逻辑
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
             SpellStopCasting()
@@ -221,7 +221,7 @@ DefensiveAPL:AddSpell(
 DefensiveAPL:AddSpell(
     Intimidation:CastableIf(function(self)
         return HERUIIntimidation() and  -- 检查威慑开关
-               GetKeyState(17) and -- 按下T键时释放
+               GetKeyState(84) > 30000 and -- 按下T键时释放
                not Player:GetAuras():FindMy(Intimidation):IsUp() -- 没有威慑buff
     end):SetTarget(Player):PreCast(function(self)
         if Player:IsCastingOrChanneling() then
@@ -237,14 +237,14 @@ DefensiveAPL:AddSpell(
 DefensiveAPL:AddAction("CancelTKeyIntimidation", function()
     if isTKeyIntimidationActive then
         -- T键触发的威慑，按原有逻辑处理
-        if not GetKeyState(17) and Player:GetAuras():FindMy(Intimidation):IsUp() then
+        if not (GetKeyState(84) > 30000) and Player:GetAuras():FindMy(Intimidation):IsUp() then
             CancelSpellByName("威慑")
             isTKeyIntimidationActive = false
             return true
         end
     else
         -- 非T键触发的威慑，血量大于等于80%时取消
-        if not GetKeyState(17) and Player:GetHP() >= 80 and Player:GetAuras():FindMy(Intimidation):IsUp() then
+        if not (GetKeyState(84) > 30000) and Player:GetHP() >= 80 and Player:GetAuras():FindMy(Intimidation):IsUp() then
             CancelSpellByName("威慑")
             return true
         end
@@ -277,7 +277,7 @@ ResourceAPL:AddSpell(
 ResourceAPL:AddSpell(
     bsxianjing:CastableIf(function(self)
         return Target:Exists()
-            and GetKeyState(58)
+            and GetKeyState(164) > 30000
             and not Player:IsChanneling()
             and Target:IsAlive()
             and Target:IsEnemy()
@@ -308,7 +308,7 @@ ResourceAPL:AddSpell(
 ResourceAPL:AddSpell(
     Coercion:CastableIf(function(self)
         return Pet:Exists()
-            and GetKeyState(58)
+            and GetKeyState(164) > 30000
             and Pet:IsAlive()
             and Player:IsAffectingCombat()
             and not self:IsOnCooldown()
@@ -319,7 +319,7 @@ ResourceAPL:AddSpell(
 ResourceAPL:AddSpell(
     ConcussiveShot:CastableIf(function(self)
         return Target:Exists()
-            and GetKeyState(58)
+            and GetKeyState(164) > 30000
             and Target:IsAlive()
             and not self:IsOnCooldown()
     end):SetTarget(Target)
@@ -578,7 +578,7 @@ SurvivalHunter:Sync(function()
     PetControlAPL:Execute()
 
     -- 如果按住F键（假死状态）或T键（威慑状态），则不执行其他循环
-    if GetKeyState(3) or GetKeyState(17) then
+    if GetKeyState(84) > 30000 or GetKeyState(70) > 30000 then
         return
     end
 

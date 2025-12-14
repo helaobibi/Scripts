@@ -45,4 +45,5 @@ function ItemBook:GetItemByName(name)
     return nil
 end
 
+Bastion.ItemBook = ItemBook
 return ItemBook

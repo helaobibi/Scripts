@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 ---@class List
 local List = {
     -- Add overload
@@ -206,4 +208,5 @@ function List:__tostring()
     return self:toString()
 end
 
+Bastion.List = List
 return List

@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 ---@class Cache
 local Cache = {}
 Cache.__index = Cache
@@ -53,4 +55,5 @@ function Cache:IsCached(key)
     return false
 end
 
+Bastion.Cache = Cache
 return Cache

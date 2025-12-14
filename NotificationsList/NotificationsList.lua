@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 -- Create a NotificationsList class
 
 ---@class NotificationsList
@@ -143,5 +145,6 @@ function NotificationsList:RemoveAllNotifications()
     end
 end
 
--- Remove all notifications
+Bastion.NotificationsList = NotificationsList
+Bastion.Notification = Notification
 return NotificationsList, Notification

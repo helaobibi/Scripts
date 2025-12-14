@@ -61,4 +61,5 @@ function SpellBook:GetIfRegistered(id)
     return self.spells[id]
 end
 
+Bastion.SpellBook = SpellBook
 return SpellBook

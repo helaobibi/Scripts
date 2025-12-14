@@ -733,4 +733,5 @@ function AuraTable:HasAnyDispelableAura(spell)
     return false
 end
 
+Bastion.AuraTable = AuraTable
 return AuraTable

@@ -1,7 +1,5 @@
 local Tinkr, Bastion = ...
 
-local ObjectManager = Tinkr.Util.ObjectManager
-
 local Unit = Bastion.Unit
 
 -- Create a new UnitManager class
@@ -402,4 +400,5 @@ function UnitManager:GetEnemyClosestToCentroid(radius, range, minEnemyCount)
     return closestEnemy
 end
 
+Bastion.UnitManager = UnitManager
 return UnitManager

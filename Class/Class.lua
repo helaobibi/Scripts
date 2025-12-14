@@ -70,5 +70,5 @@ function Class:GetColor()
     return C_ClassColor.GetClassColor(self.class.name)
 end
 
-
+Bastion.Class = Class
 return Class

@@ -82,4 +82,5 @@ function Module:Tick()
     end
 end
 
+Bastion.Module = Module
 return Module

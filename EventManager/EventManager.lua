@@ -1,3 +1,5 @@
+local Tinkr, Bastion = ...
+
 -- Create an EventManager class
 ---@class EventManager
 local EventManager = {
@@ -68,4 +70,5 @@ function EventManager:TriggerEvent(event, ...)
     end
 end
 
+Bastion.EventManager = EventManager
 return EventManager

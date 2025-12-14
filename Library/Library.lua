@@ -112,4 +112,5 @@ function Library:Import(library)
     return lib:Resolve()
 end
 
+Bastion.Library = Library
 return Library

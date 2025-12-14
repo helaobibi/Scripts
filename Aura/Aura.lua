@@ -351,4 +351,5 @@ function Aura:IsDispelableBySpell(spell)
     return false
 end
 
+Bastion.Aura = Aura
 return Aura
