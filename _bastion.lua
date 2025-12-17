@@ -28,24 +28,34 @@ end
 
 local function Load(dir)
     local listDir = dir
+    -- 路径转换逻辑与 Bastion:Require 保持一致
     if dir:sub(1, 1) == '@' then
-        listDir = 'scripts/' .. dir:sub(2)
+        listDir = '/scripts/scripts/' .. dir:sub(2)  -- 从 Unlocker Base Directory 加载
     elseif dir:sub(1, 1) == '~' then
-        listDir = dir:sub(2)
+        listDir = '/scripts/' .. dir:sub(2)
+    elseif dir:sub(1, 1) ~= '/' then
+        listDir = '/' .. listDir
     end
 
-    local files = ListFiles(listDir)
+    -- 规范化路径：确保以 /* 结尾（ListFiles 要求的格式）
+    listDir = listDir:gsub('[/\\]+$', '')  -- 先去掉尾部斜杠
+    local listPath = listDir .. '/*'       -- 添加 /* 后缀
+
+    local files = ListFiles(listPath)
 
     if not files then
-        Bastion:Debug("ListFiles returned nil for", listDir)
+        Bastion:Debug("ListFiles returned nil for", listPath)
         return
     end
 
     for i = 1, #files do
         local file = files[i]
-        if file:sub(-4) == ".lua" or file:sub(-5) == '.luac' then
-            -- 使用原始 dir 前缀，让 Bastion:Require 处理路径转换
-            Bastion:Require(dir .. file:sub(1, -5))
+        -- 过滤 . 和 .. 条目
+        if file ~= '.' and file ~= '..' then
+            if file:sub(-4) == ".lua" or file:sub(-5) == '.luac' then
+                -- 使用原始 dir 前缀，让 Bastion:Require 处理路径转换
+                Bastion:Require(dir .. file:sub(1, -5))
+            end
         end
     end
 end
@@ -564,23 +574,7 @@ function Bastion.Bootstrap()
     -- 按顺序加载外部文件
     Load("@Libraries/")  -- 加载库文件
     Load("@Modules/")    -- 加载模块文件
-    Load("@")            -- 加载脚本根目录文件
-
-    -- 手动加载 scripts 目录下的脚本（因为 ListFiles 返回 nil）
-    local scriptsToLoad = {
-        "~scripts/SurvivalHunter",
-        "~scripts/MarksmanHunter",
-        "~scripts/FrostMage",
-        "~scripts/ArcaneMage",
-    }
-    for _, scriptPath in ipairs(scriptsToLoad) do
-        local ok, err = pcall(function()
-            Bastion:Require(scriptPath)
-        end)
-        if not ok then
-            Bastion:Debug("Failed to load", scriptPath, err)
-        end
-    end
+    Load("@")            -- 加载脚本根目录文件（scripts/scripts/）
     
     -- ===================== HERUI 组件加载 =====================
     -- 根据玩家职业加载对应的 HERUI UI 插件

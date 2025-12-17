@@ -113,7 +113,7 @@ local function CheckAndSetTarget()
     if not Target:Exists() or Target:IsFriendly() or not Target:IsAlive() then
         if BestTarget:Exists() then -- 检查返回值有效
             -- 设置最佳目标为当前目标
-            SetTargetObject(BestTarget.unit)
+            TargetUnit(BestTarget.unit)
             return true
         end
     end

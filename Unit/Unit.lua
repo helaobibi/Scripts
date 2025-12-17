@@ -93,7 +93,7 @@ end
 -- Get the units GUID
 ---@return string
 function Unit:GetGUID()
-    return ObjectGUID(self:GetOMToken())
+    return UnitGUID(Object(self:GetOMToken()))
 end
 
 -- Get the GUID of the unit's target
@@ -264,7 +264,7 @@ function Unit:GetOMToken()
     if not self.unit then
         return "none"
     end
-    return self.unit
+    return Object(self.unit)
 end
 
 -- Is the unit a target
@@ -353,43 +353,30 @@ local losFlag = bit.bor(0x1, 0x10, 0x100000)
 ---@param unit Unit
 ---@return boolean
 function Unit:CanSee(unit)
-    -- mechagon smoke cloud
-    -- local mechagonID = 2097
-    -- local smokecloud = 298602
-
-    -- local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceID, instanceGroupSize, LfgDungeonID =
-    -- GetInstanceInfo()
-
-    -- otherUnit = otherUnit and otherUnit or "player"
-    -- if instanceID == 2097 then
-    --     if (self:debuff(smokecloud, unit) and not self:debuff(smokecloud, otherUnit))
-    --         or (self:debuff(smokecloud, otherUnit) and not self:debuff(smokecloud, unit))
-    --     then
-    --         return false
-    --     end
-    -- end
     local ax, ay, az = ObjectPosition(self:GetOMToken())
     local ah = ObjectHeight(self:GetOMToken())
-    local attx, atty, attz = GetUnitAttachmentPosition(unit:GetOMToken(), 34)
 
-    if not attx or not ax then
+    local bx, by, bz = ObjectPosition(unit:GetOMToken())
+    local bh = ObjectHeight(unit:GetOMToken())
+
+    if not ax or not bx then
         return false
     end
 
-    if not ah then
+    if not ah or not bh then
         return false
     end
 
-    if (ax == 0 and ay == 0 and az == 0) or (attx == 0 and atty == 0 and attz == 0) then
+    if (ax == 0 and ay == 0 and az == 0) or (bx == 0 and by == 0 and bz == 0) then
         return true
     end
 
-    if not attx or not ax then
-        return false
-    end
+    local attx, atty, attz = bx, by, bz + bh
 
     local x, y, z = TraceLine(ax, ay, az + ah, attx, atty, attz, losFlag)
-    if x ~= 0 or y ~= 0 or z ~= 0 then
+
+    -- TraceLine 无碰撞时返回 nil 或 false，有碰撞时返回碰撞点坐标(number)
+    if x and type(x) == "number" then
         return false
     else
         return true

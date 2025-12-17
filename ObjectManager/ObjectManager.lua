@@ -81,7 +81,7 @@ function ObjectManager:Refresh()
         self:EnumLists(object)
 
         if ({ [5] = true,[6] = true,[7] = true })[ObjectType(object)] then
-            local unit = Bastion.UnitManager:GetObject(ObjectGUID(object))
+            local unit = Bastion.UnitManager:GetObject(UnitGUID(Object(object)))
             if not unit then
                 unit = Bastion.Unit:New(object)
                 Bastion.UnitManager:SetObject(unit)

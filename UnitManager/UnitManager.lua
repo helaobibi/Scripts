@@ -32,7 +32,7 @@ function UnitManager:__index(k)
         return self.customUnits[k].unit
     end
 
-    local kguid = ObjectGUID(k)
+    local kguid = UnitGUID(Object(k))
 
     if kguid and self.objects[kguid] then
         return self.objects[kguid]
@@ -72,7 +72,7 @@ function UnitManager:Get(token)
     --     error("UnitManager:Get - Invalid token: " .. token)
     -- end
 
-    local tguid = ObjectGUID(token)
+    local tguid = UnitGUID(Object(token))
 
     if tguid and self.objects[tguid] == nil then
         if token == 'none' then
@@ -83,7 +83,7 @@ function UnitManager:Get(token)
     end
 
     return Bastion.Refreshable:New(self.objects[tguid], function()
-        local tguid = ObjectGUID(token) or "none"
+        local tguid = UnitGUID(Object(token)) or "none"
 
         if self.objects[tguid] == nil then
             if token == 'none' then
