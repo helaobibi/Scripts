@@ -583,7 +583,7 @@ SurvivalHunter:Sync(function()
     end
 
     -- 战斗中切目标
-    if Player:IsAffectingCombat() then
+    if Player:IsAffectingCombat() and HERUISwitchTarget() then
         CheckAndSetTarget()
     end
     if HERUIAOE() then

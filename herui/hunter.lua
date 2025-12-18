@@ -52,9 +52,15 @@ HunterUI.BUTTON_CONFIGS = {
     },
     {
         id = "interrupt",
-        name = "InterruptButton", 
-        icon = "Interface\\Icons\\inv_ammo_arrow_03", 
+        name = "InterruptButton",
+        icon = "Interface\\Icons\\inv_ammo_arrow_03",
         label = "打断"  -- 自动打断
+    },
+    {
+        id = "switchTarget",
+        name = "SwitchTargetButton",
+        icon = "Interface\\Icons\\Ability_Hunter_SniperShot",
+        label = "切目标"  -- 战斗中切目标
     }
 }
 
@@ -66,7 +72,8 @@ HunterUI.INITIAL_STATES = {
     petAttack = true,       -- 宠物攻击默认开启
     petFollow = false,      -- 宠物跟随默认关闭
     interrupt = true,       -- 自动打断默认开启
-    intimidation = true     -- 威慑默认开启
+    intimidation = true,    -- 威慑默认开启
+    switchTarget = true     -- 战斗中切目标默认开启
 }
 
 -- 构造函数 - 创建新的HunterUI实例
@@ -347,8 +354,9 @@ if hunterInstance then
     _G.HERUIPetFollow = hunterInstance:getState("petFollow")          -- 宠物跟随状态
     _G.HERUIInterrupt = hunterInstance:getState("interrupt")          -- 自动打断状态
     _G.HERUIIntimidation = hunterInstance:getState("intimidation")    -- 威慑状态
+    _G.HERUISwitchTarget = hunterInstance:getState("switchTarget")    -- 切目标状态
     _G.HERUIAOE = function() return hunterInstance:getAOEState() end  -- AOE模式状态
-    
+
     -- 导出插件实例供直接访问
     _G.HunterUI = hunterInstance
 end
