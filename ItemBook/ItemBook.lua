@@ -30,18 +30,18 @@ end
 function ItemBook:GetItemByName(name)
     -- 搜索背包
     for bag = 0, 4 do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local itemID = GetContainerItemID(bag, slot)
+        local numSlots = C_Container.GetContainerNumSlots(bag)
+        for slot = 1, numSlots do
+            local itemID = C_Container.GetContainerItemID(bag, slot)
             if itemID then
                 local itemName = GetItemInfo(itemID)
                 if itemName and itemName:find(name) then
-                    -- 获取并返回物品对象
                     return self:GetItem(itemID)
                 end
             end
         end
     end
-    
+
     return nil
 end
 
